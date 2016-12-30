@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CRM Code Editor</title>
+    <meta charset="utf-8" />
+    <meta content="IE=10,chrome=1" http-equiv="X-UA-Compatible">
+    <link href="content/CrmCodeEditor.min.css" rel="stylesheet" />
+    <script src="../../ClientGlobalContext.js.aspx" type="text/javascript"></script>
+    <script src="scripts/CrmCodeEditor.min.js"></script>
+</head>
+<body ng-app="app" ng-controller="app.controllers.CrmCodeEditor as crmCodeEditor">
+
+    <div id="Top">
+        <span id="TopTitle">CRM Code Editor</span><span class="Version">v2.0.0.0</span>
+        <a href="https://www.paypal.me/JLattimer" target="_blank" class="TopImage">
+            <img title="Feel free to donate if this saved you some time" alt="PayPal"
+                 src="data:image/png;base64,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" />
+        </a>
+        <a href="https://github.com/jlattimer/CRMCodeEditor" target="_blank" class="TopImage">
+            <img title="Check out the project on GitHub" alt="GitHub"
+                 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTJDBGvsAAACQUlEQVRIS63WT0sVURjH8VvYHykpaae+AXetLKRNUYoiuYsyrL2thJCKNlGbXkBQLYMgJYuiF5AYZOCbEAQhiaD8k5Ta9zfMkXMfnzMOd+YHH+5l5tznMHfOPHMaJdOOUTzDN6ziX07fdUznruI4KqcTT/ADuyVp7GPoty3lJnQ1XvEy9NsxlM4RvIRXrBUv0IbCaNL38ApU8Q6qnUydV2rpyt3onsYDN3AetzGXHyvjM26hH3/yY8ENNEUr0C6kecQZxgwe4Bou5/Rdx3RuCHG+IK6pOZpWux6ZeIDMompUw9bVo5ZFzcF7Tr+iahZg6+qqjyLrSPakfETVfIJXWx0ua3X2hBZWF6qmG5uw9TVn1mftibeoK6pl6+sWuG3xPuqKVryt/x3ZG8aemERdUS1b/y/ciR+hrqiWra853b96GnVFtWx9zekurr1nrWKOwesR2eLyHieZQNXcgVc7e5xSDeQ3+tBqzmENXu2sgWiPFP8dS9jKv6/jLk6gbDowBTWhUDPWdBvDS2IbI1DX0tspDP4FvczvQb3d5iQe4gNSVxnsvSSU+LW4g3GcwUp+LHiNVN4gHutR4ziNpmhjFgb8xCmcxSL0TyzjIlK5jngSz76NQIi2J2HQUx3Icyj/LIo2BfEk1nMko92g7mUY/AoX0INeFO2ViyZWzVI7zfjKYyqeyhV4v9GVHjhpHN0P204HkMog4rFaSMl7elC0ArX8VUTFihbXJYQJ9Zt9q7eV6IFXFytaZIehblWixzca/wHl+IA7gyLVvwAAAABJRU5ErkJggg==" />
+        </a>
+    </div>
+    <div id="wrGrid" ui-grid="crmCodeEditor.gridOptions" ui-grid-pagination ng-show="crmCodeEditor.gridmode()"></div>
+
+    <div id="statusbar" ng-show="crmCodeEditor.editmode()">
+        <span class="statusmessage" ng-bind="crmCodeEditor.statusMessage"></span><span ng-bind="crmCodeEditor.wrName"></span>
+    </div>
+    <div class="clear"></div>
+    <div id="wrInfo" ng-show="crmCodeEditor.editmode()" ng-cloak>
+        <label for="solution" class="wrField" ng-show="crmCodeEditor.showcreate()">Solution: </label>
+        <select id="solution" class="wrField" ng-show="crmCodeEditor.showcreate()" ng-model="crmCodeEditor.selectedSolution" ng-options="solution.id as solution.name for solution in crmCodeEditor.solutions" ng-change="crmCodeEditor.solutionChange()"></select>
+        <label for="name" class="wrField">Name (Required): </label>
+        <span id="prefix" class="wrField" ng-bind="crmCodeEditor.solPrefix" ng-show="crmCodeEditor.showcreate()"></span>
+        <input id="name" class="wrField" type="text" maxlength="256" ng-model="crmCodeEditor.wrName" ng-disabled="!crmCodeEditor.wrIsNew" />
+        <label for="displayName" class="wrField">Display Name: </label>
+        <input id="displayName" class="wrField" type="text" maxlength="200" ng-model="crmCodeEditor.wrDisplayName" />
+        <br />
+        <label for="type" class="wrField">Type: </label>
+        <select id="type" class="wrField" ng-model="crmCodeEditor.wrType" ng-disabled="!crmCodeEditor.wrIsNew" ng-options="wrType.code as wrType.name for wrType in crmCodeEditor.wrTypeCodes" ng-change="crmCodeEditor.wrTypeChange()"></select>
+        <label for="description" class="wrField">Description: </label>
+        <input id="description" class="wrField" type="text" maxlength="2000" ng-model="crmCodeEditor.wrDescription" />
+        <br />
+        <div>
+            <div class="displayDiv">
+                <label for="createdOn" class="wrField">Created On:</label>
+                <span id="createdOn" class="displayOnly">{{crmCodeEditor.wrCreatedOn}}</span>
+            </div>
+            <div class="displayDiv">
+                <label for="createdBy" class="wrField">Created By:</label>
+                <span id="createdBy" class="displayOnly">{{crmCodeEditor.wrCreatedBy}}</span>
+            </div>
+            <div class="displayDiv">
+                <label for="modifiedOn" class="wrField">Modified On:</label>
+                <span id="modifiedOn" class="displayOnly">{{crmCodeEditor.wrModifiedOn}}</span>
+            </div>
+            <div class="displayDiv">
+                <label for="modifiedBy" class="wrField">Modified By:</label>
+                <span id="modifiedBy" class="displayOnly">{{crmCodeEditor.wrModifiedBy}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="toolbar" ng-show="crmCodeEditor.editmode()" ng-cloak>
+        <div class="save toolbarButton smallImageButton" title="Save" ng-click="crmCodeEditor.validateSaveItem(false)" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="save toolbarButton smallImageButton" title="Create" ng-click="crmCodeEditor.validateCreateItem()" ng-show="crmCodeEditor.showcreate()"></div>
+        <div class="savepublish toolbarButton smallImageButton" title="Save & Publish" ng-click="crmCodeEditor.validateSaveItem(true)" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="saveas toolbarButton smallImageButton" title="Save As..." ng-click="crmCodeEditor.saveAs()" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="cancel toolbarButton smallImageButton" title="Cancel" ng-click="crmCodeEditor.cancel()"></div>
+        <div class="copycode toolbarButton smallImageButton" title="Copy Code" ng-click="crmCodeEditor.copyCode()"></div>
+        <div class="diff toolbarButton smallImageButton" title="Compare With Published Version" ng-click="crmCodeEditor.showDiff()" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="uploadMessage" ng-show="!crmCodeEditor.wrIsManaged && crmCodeEditor.editorMode == 'edit'">Drag an existing file (JS, HTML, CSS, or XML) into the editor to upload</div>
+    </div>
+
+    <div id="monacoeditor" ng-show="crmCodeEditor.editmode()" ng-cloak file-upload="[text/css, text/plain, text/html, text/xml]"
+         file-name="uploadFileName" data-max-file-size="100000"></div>
+    <div ng-show="crmCodeEditor.editorMode == 'diff'" ng-cloak>
+        <div class="diffLeft">Published Version</div>
+        <div class="diffRight">Working Version</div>
+    </div>
+    <script src="monacoeditor/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'monacoeditor/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+        });
+    </script>
+</body>
+</html>

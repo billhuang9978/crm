@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProjectGuid>{EBC4B023-F605-41F0-AA56-7844BCA0B3CE}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <TypeScriptToolsVersion>2.1</TypeScriptToolsVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="content\CrmCodeEditor.css" />
+    <Content Include="content\images\logo16.png" />
+    <Content Include="content\images\logo32.png" />
+    <Content Include="CrmCodeEditor.html" />
+    <Content Include="content\angularblockui.css" />
+    <Content Include="content\angularnotify.css" />
+    <Content Include="content\images\cancel.png" />
+    <Content Include="content\images\code.png" />
+    <Content Include="content\images\copycode.png" />
+    <Content Include="content\images\delete.png" />
+    <Content Include="content\images\dependency.png" />
+    <Content Include="content\images\diff.png" />
+    <Content Include="content\images\edit.png" />
+    <Content Include="content\images\link.png" />
+    <Content Include="content\images\new.png" />
+    <Content Include="content\images\refresh.png" />
+    <Content Include="content\images\save.png" />
+    <Content Include="content\images\saveas.png" />
+    <Content Include="content\images\savepublish.png" />
+    <Content Include="content\uigrid.css" />
+    <Content Include="content\uigrid.svg" />
+    <Content Include="monacoeditor\min\vs\base\worker\workerMain.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\bat.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\coffee.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\cpp.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\csharp.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\css.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\dockerfile.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\fsharp.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\go.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\handlebars.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\html.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\ini.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\jade.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\java.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\less.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\lua.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\markdown.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\objective-c.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\php.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\postiats.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\powershell.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\python.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\r.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\razor.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\ruby.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\scss.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\sql.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\swift.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\vb.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\xml.js" />
+    <Content Include="monacoeditor\min\vs\basiclanguages\src\yaml.js" />
+    <Content Include="monacoeditor\min\vs\editor\contrib\quickOpen\browser\symbolsprite.svg" />
+    <Content Include="monacoeditor\min\vs\editor\contrib\suggest\browser\symbolsprite.svg" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.css" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.de.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.es.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.fr.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.it.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.ja.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.ko.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.ru.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.zh-cn.js" />
+    <Content Include="monacoeditor\min\vs\editor\editor.main.nls.zh-tw.js" />
+    <Content Include="monacoeditor\min\vs\language\css\cssMode.js" />
+    <Content Include="monacoeditor\min\vs\language\css\cssWorker.js" />
+    <Content Include="monacoeditor\min\vs\language\html\htmlMode.js" />
+    <Content Include="monacoeditor\min\vs\language\html\htmlWorker.js" />
+    <Content Include="monacoeditor\min\vs\language\json\jsonMode.js" />
+    <Content Include="monacoeditor\min\vs\language\json\jsonWorker.js" />
+    <Content Include="monacoeditor\min\vs\language\typescript\lib\typescriptServices.js" />
+    <Content Include="monacoeditor\min\vs\language\typescript\src\mode.js" />
+    <Content Include="monacoeditor\min\vs\language\typescript\src\worker.js" />
+    <Content Include="monacoeditor\min\vs\loader.js" />
+    <Content Include="scripts\angular.js" />
+    <Content Include="scripts\angularblockui.js" />
+    <Content Include="scripts\angularnotify.js" />
+    <Content Include="scripts\angularroute.js" />
+    <Content Include="scripts\bluebird.js" />
+    <Content Include="scripts\clipboard.js" />
+    <Content Include="scripts\system.js" />
+    <Content Include="scripts\uigrid.js" />
+    <Content Include="scripts\xml2json.js" />
+    <Content Include="gulpfile.js" />
+    <Content Include="web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <Content Include="content\uigrid.woff" />
+    <Content Include="content\uigrid.ttf" />
+    <Content Include="content\uigrid.eot" />
+    <Content Include="package.json" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="scripts\esprima.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="app.ts" />
+    <TypeScriptCompile Include="directives\fileUpload.ts" />
+    <TypeScriptCompile Include="libs\typings\x2js\xml2json.d.ts" />
+    <TypeScriptCompile Include="services\Base64.ts" />
+    <TypeScriptCompile Include="services\CrmService.ts" />
+    <TypeScriptCompile Include="snippets\ContextSnippets.ts" />
+    <TypeScriptCompile Include="snippets\ControlsSnippets.ts" />
+    <TypeScriptCompile Include="controllers\CrmCodeEditor.ts" />
+    <TypeScriptCompile Include="snippets\EntitySnippets.ts" />
+    <TypeScriptCompile Include="snippets\ExecObjSnippets.ts" />
+    <TypeScriptCompile Include="snippets\FormSelectorSnippets.ts" />
+    <TypeScriptCompile Include="snippets\GridSnippets.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-animate.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-component-router.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-cookies.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-mocks.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-resource.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-route.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular-sanitize.d.ts" />
+    <TypeScriptCompile Include="libs\typings\angularjs\angular.d.ts" />
+    <TypeScriptCompile Include="libs\typings\clipboard\clipboard.d.ts" />
+    <TypeScriptCompile Include="libs\typings\es6-promise\es6-promise.d.ts" />
+    <TypeScriptCompile Include="libs\typings\esprima\esprima.d.ts" />
+    <TypeScriptCompile Include="libs\typings\estree\estree.d.ts" />
+    <TypeScriptCompile Include="libs\typings\estree\flow.d.ts" />
+    <TypeScriptCompile Include="libs\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="libs\typings\ui-grid\ui-grid.d.ts" />
+    <TypeScriptCompile Include="libs\typings\xrm\xrm-7.1.d.ts" />
+    <TypeScriptCompile Include="snippets\MobileSnippets.ts" />
+    <TypeScriptCompile Include="monacoeditor\monaco.d.ts" />
+    <TypeScriptCompile Include="snippets\NavigationSnippets.ts" />
+    <TypeScriptCompile Include="snippets\PanelSnippets.ts" />
+    <TypeScriptCompile Include="snippets\ProcessSnippets.ts" />
+    <TypeScriptCompile Include="snippets\Snippets.ts" />
+    <TypeScriptCompile Include="snippets\AttributeSnippets.ts" />
+    <TypeScriptCompile Include="snippets\TabsSnippets.ts" />
+    <TypeScriptCompile Include="snippets\UiSnippets.ts" />
+    <TypeScriptCompile Include="snippets\UtilitySnipperts.ts" />
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>CRMCodeEditor</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>CRMCodeEditor</AssemblyName>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets')" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>False</TypeScriptSourceMap>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>System</TypeScriptModuleKind>
+    <TypeScriptOutFile>Scripts/CrmCodeEditor.js</TypeScriptOutFile>
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>56736</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:56736/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

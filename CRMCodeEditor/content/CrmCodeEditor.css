@@ -1,0 +1,299 @@
+﻿html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Segoe\000020UI,Tahoma,Arial;
+    font-size: 14px;
+}
+
+input, select, textarea, button {
+    font-family: inherit;
+}
+
+.clear {
+    clear: both;
+}
+
+#wrGrid {
+    height: 550px;
+}
+
+.gridLeft {
+    text-align: left;
+    padding-left: 8px;
+}
+
+.firstUpper:first-letter {
+    text-transform: capitalize;
+}
+
+.ui-grid-pager-control input {
+    height: 14px !important;
+}
+
+.editCell {
+    text-align: center;
+}
+
+    .editCell button {
+        margin-top: 3px;
+    }
+
+.toolbar {
+    border-bottom: 1px solid #d4d4d4;
+    height: 22px;
+    padding: 5px;
+    background: #f3f3f3;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(1, #ffffff));
+    background: -ms-linear-gradient(bottom, #eeeeee, #ffffff);
+    background: -moz-linear-gradient(center bottom, #eeeeee 0%, #ffffff 100%);
+    background: -o-linear-gradient(#ffffff, #eeeeee);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
+}
+
+#Top {
+    background-color: gainsboro;
+    height: 40px;
+}
+
+.TopImage {
+    float: right;
+    margin-top: 5px;
+}
+
+    .TopImage img {
+        border: none;
+        outline: none;
+    }
+
+#Top .Version {
+    margin-left: 10px;
+}
+
+.Version {
+    font-style: italic;
+}
+
+.invisible {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+label {
+    font-weight: bold;
+}
+
+.displayDiv {
+    float: left;
+    margin-right: 20px;
+}
+
+.displayOnly {
+    min-width: 150px;
+    display: inline-block;
+}
+
+#TopTitle {
+    font-size: 20px;
+    line-height: 40px;
+    margin-left: 10px;
+}
+
+#wrInfo {
+    margin-left: 10px;
+    height: 100px;
+}
+
+#newWr {
+    position: absolute;
+    margin-left: 14px;
+    bottom: 0;
+    margin-bottom: 14px;
+}
+
+.wrField {
+    margin: 5px 0 5px 0;
+}
+
+input.wrField, select.wrField {
+    margin-right: 20px;
+}
+
+#description {
+    width: 700px;
+}
+
+#name, #displayName {
+    width: 275px;
+}
+
+#prefix {
+    background-color: #dadada;
+    padding: 2px;
+}
+
+.new {
+    background-image: url(images/new.png);
+}
+
+.edit {
+    background-image: url(images/edit.png);
+    margin-left: 2px;
+    float: left;
+}
+
+.delete {
+    background-image: url(images/delete.png);
+    margin-left: 6px;
+    float: left;
+}
+
+#refresh {
+    position: absolute;
+    margin-left: 30px;
+    bottom: 0;
+    margin-bottom: 14px;
+}
+
+.refresh {
+    background-image: url(images/refresh.png);
+}
+
+.linkcopy {
+    background-image: url(images/link.png);
+    margin-left: 2px;
+    float: left;
+}
+
+.codecopy {
+    background-image: url(images/code.png);
+    margin-left: 6px;
+    float: left;
+}
+
+.dependencies {
+    background-image: url(images/dependency.png);
+    margin-left: 6px;
+    float: left;
+}
+
+.save {
+    background-image: url(images/save.png);
+    float: left;
+    margin-right: 5px;
+}
+
+.savepublish {
+    background-image: url(images/savepublish.png);
+    float: left;
+    margin-right: 5px;
+}
+
+.saveas {
+    background-image: url(images/saveas.png);
+    float: left;
+    margin-right: 5px;
+}
+
+.cancel {
+    background-image: url(images/cancel.png);
+    float: left;
+    margin-right: 5px;
+}
+
+.copycode {
+    background-image: url(images/copycode.png);
+    float: left;
+    margin-right: 5px;
+}
+
+.diff {
+    background-image: url(images/diff.png);
+    float: left;
+    margin-right: 5px;
+}
+
+#toolbar {
+    height: 35px;
+    margin-left: 20px;
+}
+
+#statusbar {
+    height: 30px;
+    font-size: 18px;
+}
+
+.statusmessage {
+    float: left;
+    margin-left: 10px;
+    margin-right: 8px;
+}
+
+.toolbarButton {
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    background-repeat: no-repeat;
+    display: block;
+}
+
+    .toolbarButton:hover {
+        background-color: #dadada;
+        border-color: #c1c1c1;
+    }
+
+    .toolbarButton:active {
+        border-color: #8fb1e8;
+    }
+
+.smallImageButton {
+    width: 24px;
+    height: 24px;
+}
+
+    .smallImageButton:hover {
+        background-position: -24px 0;
+    }
+
+.largeImageButton {
+    width: 32px;
+    height: 32px;
+}
+
+    .largeImageButton:hover {
+        background-position: -32px 0;
+    }
+
+#monacoeditor {
+    border: 1px solid #ccc;
+    height: 70%;
+    margin: 5px;
+    padding: 5px;
+}
+
+    #monacoeditor.drop {
+        border-color: #8fb1e8;
+    }
+
+.confirmCancel {
+    margin-left: 15px;
+}
+
+.uploadMessage {
+    font-style: italic;
+    margin-left: 500px;
+}
+
+.diffLeft {
+    float: left;
+    margin-left: 400px;
+    font-weight: bold;
+}
+
+.diffRight {
+    float: right;
+    margin-right: 400px;
+    font-weight: bold;
+}
