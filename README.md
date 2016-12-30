@@ -1,7 +1,7 @@
 # CRM Code Editor
 A better experience for managing and editing web resources in CRM 2011/2013/2015/2016/365 Online & On Premise
 
-**Solution downloads are found on the [releases](https://github.com/jlattimer/CRMCodeEditorr/releases) page.**
+**Solution downloads are found on the [releases](https://github.com/jlattimer/CRMCodeEditor/releases) page.**
 
 ##Easily find and edit web resources with a real code editor!##
 
