@@ -130,10 +130,22 @@ input.wrField, select.wrField {
     width: 275px;
 }
 
-#prefix {
+#name {
+    margin-right: 0;
+}
+
+#prefix, #tsExt {
     background-color: #dadada;
     padding: 2px;
 }
+
+#tsExt {
+    margin-right: 20px;
+}
+
+    #tsExt.nodisplay {
+        background-color: white;
+    }
 
 .new {
     background-image: url(images/new.png);
@@ -216,6 +228,12 @@ input.wrField, select.wrField {
     margin-right: 5px;
 }
 
+.jscript {
+    background-image: url(images/js.png);
+    float: left;
+    margin-right: 5px;
+}
+
 #toolbar {
     height: 35px;
     margin-left: 20px;
@@ -266,16 +284,29 @@ input.wrField, select.wrField {
         background-position: -32px 0;
     }
 
+.buttonDisable {
+    pointer-events: none;
+    background-color: #7F7E7E !important;
+}
+
 #monacoeditor {
     border: 1px solid #ccc;
     height: 70%;
-    margin: 5px;
-    padding: 5px;
+    /*margin: 5px;
+    padding: 5px;*/
 }
 
     #monacoeditor.drop {
         border-color: #8fb1e8;
     }
+
+#tsmonacoeditor, #jsmonacoeditor {
+    border: 1px solid #ccc;
+    height: 70%;
+    position: relative;
+    overflow: hidden;
+    float: left;
+}
 
 .confirmCancel {
     margin-left: 15px;

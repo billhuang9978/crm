@@ -207,8 +207,11 @@ var app;
                         req.send(JSON.stringify(entity));
                     });
                 };
-                this.publishItem = function (id) {
+                this.publishItem = function (id1, id2) {
                     return new Promise(function (resolve, reject) {
+                        var publishString = "&lt;webresource&gt;{" + id1 + "}&lt;/webresource&gt;";
+                        if (id2 !== null)
+                            publishString += "&lt;webresource&gt;{" + id2 + "}&lt;/webresource&gt;";
                         var request = [];
                         request.push("<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>");
                         request.push("  <s:Body>");
@@ -217,7 +220,7 @@ var app;
                         request.push("        <a:Parameters xmlns:c='http://schemas.datacontract.org/2004/07/System.Collections.Generic'>");
                         request.push("          <a:KeyValuePairOfstringanyType>");
                         request.push("            <c:key>ParameterXml</c:key>");
-                        request.push("            <c:value i:type='d:string' xmlns:d='http://www.w3.org/2001/XMLSchema'>&lt;importexportxml&gt;&lt;webresources&gt;&lt;webresource&gt;{" + id + "}&lt;/webresource&gt;&lt;/webresources&gt;&lt;/importexportxml&gt;</c:value>");
+                        request.push("            <c:value i:type='d:string' xmlns:d='http://www.w3.org/2001/XMLSchema'>&lt;importexportxml&gt;&lt;webresources&gt;" + publishString + "&lt;/webresources&gt;&lt;/importexportxml&gt;</c:value>");
                         request.push("          </a:KeyValuePairOfstringanyType>");
                         request.push("        </a:Parameters>");
                         request.push("        <a:RequestId i:nil='true' />");
@@ -503,6 +506,31 @@ var app;
                         req.send();
                     });
                 };
+                this.retrieveItemByName = function (name) {
+                    return new Promise(function (resolve, reject) {
+                        var req = new XMLHttpRequest();
+                        req.open("GET", Xrm.Page.context.getClientUrl() + "/XRMServices/2011/OrganizationData.svc/WebResourceSet?$select=WebResourceId&$filter=Name eq '" + name + "'", true);
+                        req.setRequestHeader("Accept", "application/json");
+                        req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+                        req.onreadystatechange = function () {
+                            if (req.readyState === 4) {
+                                req.onreadystatechange = null;
+                                if (req.status === 200) {
+                                    var returned = JSON.parse(req.responseText).d;
+                                    var results = returned.results;
+                                    if (results.length === 1)
+                                        resolve(results[0].WebResourceId);
+                                    resolve(null);
+                                }
+                                else {
+                                    var message = _this.checkForRestError(req);
+                                    reject(message);
+                                }
+                            }
+                        };
+                        req.send();
+                    });
+                };
                 this.deleteItem = function (id) {
                     return new Promise(function (resolve, reject) {
                         var req = new XMLHttpRequest();
@@ -645,8 +673,10 @@ var app;
                 this.mode = "grid";
                 this.retrieveCount = 5000;
                 this.editor = null;
+                this.editor2 = null;
                 this.editorMode = "edit";
                 this.jsCompletionRegistered = false;
+                this.tsCompletionRegistered = false;
                 this.gridApi = null;
                 this.workingId = null;
                 this.workingType = null;
@@ -658,7 +688,8 @@ var app;
                     { code: 1, name: "HTML" },
                     { code: 2, name: "CSS" },
                     { code: 3, name: "JScript" },
-                    { code: 4, name: "XML" }
+                    { code: 4, name: "XML" },
+                    { code: 0, name: "TypeScript" }
                 ];
                 this.wrDescription = null;
                 this.wrData = [];
@@ -689,12 +720,14 @@ var app;
                     var decodedValue = null;
                     if (value)
                         decodedValue = _this.Base64.decode(value.split(",")[1]);
-                    var extenion = filename.split(".").pop();
-                    _this.wrType = _this.typeToNumber(extenion.toLowerCase());
+                    var extension = filename.split(".").pop();
+                    _this.wrType = _this.typeToNumber(extension.toLowerCase());
                     _this.editor.getModel().dispose();
-                    if (extenion.toLowerCase() === "js")
-                        extenion = "javascript";
-                    _this.createEditor(decodedValue, extenion.toLowerCase());
+                    if (extension.toLowerCase() === "js")
+                        extension = "javascript";
+                    if (extension.toLowerCase() === "ts")
+                        extension = "typescript";
+                    _this.createEditor(decodedValue, extension.toLowerCase());
                 };
                 this.clearModel = function () {
                     _this.wrName = null;
@@ -746,6 +779,7 @@ var app;
                         if (_this.pagingCookie)
                             _this.getData(_this.pagingCookie, _this.pageNumber, gridApi);
                         else {
+                            _this.handleTypeScriptFiles();
                             _this.gridOptions.data = _this.wrData;
                             if (gridApi)
                                 gridApi.core.refresh();
@@ -762,18 +796,29 @@ var app;
                         });
                     });
                 };
-                this.publishItem = function (id) {
+                this.handleTypeScriptFiles = function () {
+                    angular.forEach(_this.wrData, function (item) {
+                        if (_this.isTypeScript(item.type, item.name))
+                            item.type = "0";
+                    });
+                };
+                this.isTypeScript = function (type, name) {
+                    if (type === "4" && name.toUpperCase().substr(name.length - 3) === ".TS")
+                        return true;
+                    return false;
+                };
+                this.publishItem = function (id1, id2) {
                     _this.$scope.$apply(function () {
                         _this.blockUI.message("Publishing...");
                     });
-                    _this.CrmService.publishItem(id)
+                    _this.CrmService.publishItem(id1, id2)
                         .then(function () {
                         _this.$scope.$apply(function () {
                             _this.mode = "grid";
                             _this.editorMode = "edit";
                             _this.workingId = null;
                             _this.workingType = null;
-                            _this.disposeEditor();
+                            _this.disposeEditor(_this.editor);
                             _this.blockUI.stop();
                         });
                     })
@@ -804,11 +849,40 @@ var app;
                         return true;
                     return false;
                 };
+                this.showsxs = function () {
+                    if (_this.mode === "grid")
+                        return "none";
+                    if (_this.editorMode === "sxs")
+                        return "block";
+                    return "none";
+                };
+                this.showeditor = function () {
+                    if (_this.mode === "grid")
+                        return "none";
+                    if (_this.editorMode === "edit" || _this.editorMode === "diff")
+                        return "block";
+                    return "none";
+                };
                 this.gridmode = function () {
                     return (_this.mode === "grid");
                 };
                 this.editmode = function () {
                     return (_this.mode === "edit");
+                };
+                this.disablebutton = function () {
+                    if (_this.editorMode === "diff" || _this.editorMode === "sxs")
+                        return "buttonDisable";
+                    return "";
+                };
+                this.disablediffbutton = function () {
+                    if (_this.editorMode === "sxs")
+                        return "buttonDisable";
+                    return "";
+                };
+                this.disablesxsbutton = function () {
+                    if (_this.editorMode === "diff")
+                        return "buttonDisable";
+                    return "";
                 };
                 this.validateSaveItem = function (publish) {
                     var value = _this.editor.getValue();
@@ -835,6 +909,10 @@ var app;
                     });
                 };
                 this.saveItem = function (publish) {
+                    if (_this.wrType === 0) {
+                        _this.saveTsItems(publish);
+                        return;
+                    }
                     _this.notify.closeAll();
                     _this.block(null, "Saving...", null);
                     var value = _this.editor.getValue();
@@ -843,7 +921,7 @@ var app;
                     _this.CrmService.saveItem(_this.workingId, _this.wrDisplayName, b64Value, _this.wrDescription)
                         .then(function () {
                         if (publish) {
-                            _this.publishItem(_this.workingId);
+                            _this.publishItem(_this.workingId, null);
                         }
                         else {
                             _this.$scope.$apply(function () {
@@ -860,6 +938,51 @@ var app;
                         });
                     });
                 };
+                this.saveTsItems = function (publish) {
+                    _this.notify.closeAll();
+                    _this.block(null, "Saving...", null);
+                    var tsValue = _this.editor.getValue();
+                    var tsB64Value = _this.Base64.encode(tsValue);
+                    var jsValue = ts.transpile(tsValue);
+                    var jsB64Value = _this.Base64.encode(jsValue);
+                    var jsName = _this.wrName.slice(0, -3) + ".js";
+                    _this.CrmService.retrieveItemByName(jsName)
+                        .then(function (result) {
+                        var p1;
+                        if (result === null)
+                            p1 = _this.createWebResource(_this.wrDisplayName, jsName, 3, jsB64Value, _this.wrDescription);
+                        else
+                            p1 = _this.CrmService.saveItem(result, _this.wrDisplayName, jsB64Value, _this.wrDescription);
+                        var p2 = _this.CrmService.saveItem(_this.workingId, _this.wrDisplayName, tsB64Value, _this.wrDescription);
+                        Promise.all([p1, p2])
+                            .then(function (values) {
+                            var jsId = (result === null) ? values[0] : result;
+                            if (publish) {
+                                _this.publishItem(String(jsId), _this.workingId);
+                            }
+                            else {
+                                _this.$scope.$apply(function () {
+                                    _this.updateModifedOn(_this.workingId);
+                                    _this.blockUI.stop();
+                                });
+                            }
+                        })
+                            .catch(function (err) {
+                            _this.$scope.$apply(function () {
+                                _this.blockUI.stop();
+                            });
+                            _this.editor.getModel().dispose();
+                            _this.notify(err);
+                        });
+                    })
+                        .catch(function (err) {
+                        _this.editor.getModel().dispose();
+                        _this.$scope.$apply(function () {
+                            _this.blockUI.stop();
+                        });
+                        _this.notify(err);
+                    });
+                };
                 this.showDiff = function () {
                     var newValue = _this.editor.getValue();
                     if (_this.editor.getEditorType() === "vs.editor.ICodeEditor") {
@@ -868,7 +991,7 @@ var app;
                         _this.CrmService.retrievePublishedItem(_this.workingId)
                             .then(function (result) {
                             var currentValue = _this.Base64.decode(result);
-                            _this.disposeEditor();
+                            _this.disposeEditor(_this.editor);
                             _this.createDiffEditor(currentValue, newValue, _this.workingType);
                             _this.$scope.$apply(function () {
                                 _this.blockUI.stop();
@@ -882,16 +1005,42 @@ var app;
                         });
                     }
                     else {
-                        _this.disposeEditor();
+                        _this.disposeEditor(_this.editor);
                         _this.editorMode = "edit";
                         _this.createEditor(newValue, _this.workingType);
                     }
                 };
-                this.addToSolution = function (id, solutionName) {
-                    _this.CrmService.addToSolution(id, solutionName)
-                        .catch(function (err) {
-                        _this.notify(err);
-                    });
+                this.showJs = function () {
+                    var tsValue = _this.editor.getValue();
+                    var wrapper = document.getElementById("sxswrapper");
+                    var ed = document.getElementById("monacoeditor");
+                    if (_this.editorMode === "edit") {
+                        wrapper.style.display = "block";
+                        ed.style.display = "none";
+                        _this.editorMode = "sxs";
+                        var jsValue = ts.transpile(tsValue);
+                        _this.disposeEditor(_this.editor);
+                        _this.createSxsEditor(tsValue, jsValue);
+                    }
+                    else {
+                        wrapper.style.display = "none";
+                        ed.style.display = "block";
+                        tsValue = _this.editor.getValue();
+                        _this.disposeEditor(_this.editor);
+                        _this.disposeEditor(_this.editor2);
+                        _this.editorMode = "edit";
+                        _this.createEditor(tsValue, "typescript");
+                    }
+                };
+                this.addToSolution = function (id, solutionName, done) {
+                    if (_this.selectedSolution !== "fd140aaf-4df4-11dd-bd17-0019b9312238") {
+                        _this.CrmService.addToSolution(id, solutionName)
+                            .catch(function (err) {
+                            _this.notify(err);
+                        });
+                    }
+                    if (!done)
+                        return;
                     _this.editor.getModel().dispose();
                     _this.mode = "grid";
                     _this.wrIsNew = false;
@@ -920,6 +1069,10 @@ var app;
                     }
                 };
                 this.createItem = function () {
+                    if (_this.wrType === 0) {
+                        _this.createTsItems();
+                        return;
+                    }
                     _this.notify.closeAll();
                     _this.block(null, "Saving...", null);
                     var value = _this.editor.getValue();
@@ -928,7 +1081,7 @@ var app;
                         .then(function (result) {
                         var selSolution = _this.selectedSolution;
                         var solutionName = _this.solutions.filter(function (solution, index) { return solution["id"] === selSolution; })[0]["uniquename"];
-                        _this.addToSolution(result, solutionName);
+                        _this.addToSolution(result, solutionName, true);
                         _this.clearModel();
                         _this.gridApi.grid.clearAllFilters();
                         _this.wrData = [];
@@ -941,6 +1094,72 @@ var app;
                             _this.blockUI.stop();
                         });
                         _this.notify(err);
+                    });
+                };
+                this.createTsItems = function () {
+                    _this.notify.closeAll();
+                    _this.block(null, "Saving...", null);
+                    var tsValue = _this.editor.getValue();
+                    var tsB64Value = _this.Base64.encode(tsValue);
+                    var jsValue = ts.transpile(tsValue);
+                    var jsB64Value = _this.Base64.encode(jsValue);
+                    var tsName = _this.solPrefix + _this.wrName.trim() + ".ts";
+                    var jsName = _this.solPrefix + _this.wrName.trim() + ".js";
+                    var tsType = 4;
+                    var jsType = 3;
+                    var displayName = (!_this.wrDisplayName) ? null : _this.wrDisplayName.trim();
+                    var description = (!_this.wrDescription) ? null : _this.wrDescription.trim();
+                    _this.CrmService.retrieveItemByName(jsName)
+                        .then(function (result) {
+                        if (result !== null) {
+                            _this.$scope.$apply(function () {
+                                _this.blockUI.stop();
+                            });
+                            _this.notify("A JavaScript webresource with the same name already exists. Use a different name.");
+                            return;
+                        }
+                        var p1 = _this.createWebResource(displayName, tsName, tsType, tsB64Value, description);
+                        var p2 = _this.createWebResource(displayName, jsName, jsType, jsB64Value, description);
+                        Promise.all([p1, p2])
+                            .then(function (values) {
+                            var selSolution = _this.selectedSolution;
+                            var solutionName = _this.solutions
+                                .filter(function (solution, index) { return solution["id"] === selSolution; })[0]["uniquename"];
+                            for (var i = 0; i < values.length; i++) {
+                                var done = (i + 1 === values.length);
+                                _this.addToSolution(String(values[i]), solutionName, done);
+                            }
+                            _this.clearModel();
+                            _this.gridApi.grid.clearAllFilters();
+                            _this.wrData = [];
+                            _this.gridOptions.data = _this.wrData;
+                            _this.gridApi.core.refresh();
+                            _this.getData(null, 1, _this.gridApi);
+                        })
+                            .catch(function (err) {
+                            _this.$scope.$apply(function () {
+                                _this.blockUI.stop();
+                            });
+                            _this.notify(err);
+                        });
+                    })
+                        .catch(function (err) {
+                        _this.$scope.$apply(function () {
+                            _this.blockUI.stop();
+                        });
+                        _this.notify(err);
+                        return;
+                    });
+                };
+                this.createWebResource = function (displayname, name, type, content, description) {
+                    return new Promise(function (resolve, reject) {
+                        _this.CrmService.createItem(displayname, name, type, content, description)
+                            .then(function (result) {
+                            resolve(result);
+                        })
+                            .catch(function (err) {
+                            reject(err);
+                        });
                     });
                 };
                 this.validatecode = function (script, isNew, publish) {
@@ -963,22 +1182,24 @@ var app;
                 };
                 this.cancel = function () {
                     _this.notify.closeAll();
-                    _this.disposeEditor();
+                    _this.disposeEditor(_this.editor);
                     _this.mode = "grid";
                     _this.editorMode = "edit";
                     _this.clearModel();
                     _this.workingId = null;
                     _this.wrIsNew = false;
                 };
-                this.disposeEditor = function () {
-                    if (_this.editor) {
-                        if (_this.editor.getModel()) {
-                            if (typeof (_this.editor.getModel().dispose) !== "undefined")
-                                _this.editor.getModel().dispose();
+                this.disposeEditor = function (editor) {
+                    if (editor) {
+                        if (editor.getModel()) {
+                            if (typeof (editor.getModel().dispose) !== "undefined")
+                                editor.getModel().dispose();
                         }
-                        _this.editor.dispose();
-                        _this.editor = null;
+                        editor.dispose();
+                        editor = null;
                         document.getElementById("monacoeditor").innerHTML = "";
+                        document.getElementById("tsmonacoeditor").innerHTML = "";
+                        document.getElementById("jsmonacoeditor").innerHTML = "";
                     }
                 };
                 this.copy = function (element, block, value) {
@@ -998,26 +1219,54 @@ var app;
                 this.saveAs = function () {
                     _this.clearModel();
                     var value = _this.editor.getValue().trim();
-                    _this.disposeEditor();
+                    _this.disposeEditor(_this.editor);
                     _this.editorMode = "edit";
                     _this.statusMessage = "Creating new web resource";
                     _this.wrType = _this.typeToNumber(_this.workingType);
                     _this.wrIsNew = true;
                     _this.getSolutions(value, _this.workingType);
                 };
-                this.setJavaScriptCompletion = function () {
-                    if (_this.jsCompletionRegistered)
+                this.setJavaScriptCompletion = function (language) {
+                    if (language === "javascript" && _this.jsCompletionRegistered)
                         return;
-                    monaco.languages.registerCompletionItemProvider("javascript", {
+                    if (language === "typescript" && _this.tsCompletionRegistered)
+                        return;
+                    monaco.languages.registerCompletionItemProvider(language, {
                         provideCompletionItems: function (model, position) {
                             var snippets = new Snippets();
                             return snippets.getSnippets();
                         }
                     });
-                    _this.jsCompletionRegistered = true;
+                    (language === "javascript") ? _this.jsCompletionRegistered = true : _this.tsCompletionRegistered = true;
+                };
+                this.resize = function () {
+                    var wrapper = document.getElementById("sxswrapper");
+                    var lhs = {
+                        domNode: document.getElementById("tsmonacoeditor"),
+                        editor: null
+                    };
+                    var rhs = {
+                        domNode: document.getElementById("jsmonacoeditor"),
+                        editor: null
+                    };
+                    var horizontalSpace = 0;
+                    var wrapperSizeDiff = 25;
+                    var windowHeight = window.innerHeight || document.body.offsetHeight || document.documentElement.offsetHeight;
+                    wrapper.style.height = (windowHeight - wrapper.offsetTop - wrapperSizeDiff) + "px";
+                    var halfWidth = Math.floor((wrapper.clientWidth - 0) / 2) - 2 - (horizontalSpace / 2);
+                    var lhsSizeDiff = wrapperSizeDiff + 40;
+                    lhs.domNode.style.width = halfWidth + "px";
+                    lhs.domNode.style.height = (windowHeight - wrapper.offsetTop - lhsSizeDiff) + "px";
+                    if (lhs.editor)
+                        lhs.editor.layout();
+                    var rhsSizeDiff = wrapperSizeDiff + 40;
+                    rhs.domNode.style.width = halfWidth + "px";
+                    rhs.domNode.style.height = (windowHeight - wrapper.offsetTop - rhsSizeDiff) + "px";
+                    if (rhs.editor)
+                        rhs.editor.layout();
                 };
                 this.createEditor = function (content, format) {
-                    _this.setJavaScriptCompletion();
+                    _this.setJavaScriptCompletion(format);
                     _this.editor = monaco.editor.create(document.getElementById("monacoeditor"), {
                         value: (content !== null) ? content : null,
                         language: format,
@@ -1027,18 +1276,40 @@ var app;
                         parameterHints: true,
                         folding: true
                     });
+                    _this.editor.layout();
                 };
-                this.createDiffEditor = function (currentValue, newValue, format) {
-                    _this.setJavaScriptCompletion();
-                    _this.editor = monaco.editor.createDiffEditor(document.getElementById("monacoeditor"), {
+                this.createSxsEditor = function (ts, js) {
+                    _this.editor = monaco.editor.create(document.getElementById("tsmonacoeditor"), {
+                        value: ts,
+                        language: "typescript",
+                        readOnly: true,
                         wordWrap: true,
                         scrollBeyondLastLine: false,
                         parameterHints: true,
                         folding: true
                     });
+                    _this.editor2 = monaco.editor.create(document.getElementById("jsmonacoeditor"), {
+                        value: js,
+                        language: "javascript",
+                        readOnly: true,
+                        wordWrap: true,
+                        scrollBeyondLastLine: false,
+                        parameterHints: true,
+                        folding: true
+                    });
+                    _this.resize();
+                };
+                this.createDiffEditor = function (currentValue, newValue, format) {
+                    _this.editor = monaco.editor.createDiffEditor(document.getElementById("monacoeditor"), {
+                        wordWrap: true,
+                        scrollBeyondLastLine: false,
+                        parameterHints: true,
+                        folding: true,
+                        readOnly: true
+                    });
                     _this.editor.setModel({
-                        original: monaco.editor.createModel(currentValue, format),
-                        modified: monaco.editor.createModel(newValue, format)
+                        modified: monaco.editor.createModel(currentValue, format),
+                        original: monaco.editor.createModel(newValue, format)
                     });
                 };
                 this.solutionChange = function () {
@@ -1051,7 +1322,7 @@ var app;
                 };
                 this.wrTypeChange = function () {
                     var value = _this.editor.getValue();
-                    _this.disposeEditor();
+                    _this.disposeEditor(_this.editor);
                     switch (_this.wrType) {
                         case 2:
                             _this.createEditor(value, "css");
@@ -1061,6 +1332,9 @@ var app;
                             break;
                         case 4:
                             _this.createEditor(value, "xml");
+                            break;
+                        case 0:
+                            _this.createEditor(value, "typescript");
                             break;
                         default:
                             _this.createEditor(value, "html");
@@ -1190,6 +1464,8 @@ var app;
                                         break;
                                 }
                             });
+                            if (_this.isTypeScript(_this.wrType.toString(), _this.wrName))
+                                _this.wrType = 0;
                             var formattedValues = result["Envelope"]["Body"]["ExecuteResponse"]["ExecuteResult"]["Results"]["KeyValuePairOfstringanyType"]["value"]["FormattedValues"]["KeyValuePairOfstringstring"];
                             angular.forEach(formattedValues, function (formattedValue) {
                                 switch (formattedValue["key"]["__text"]) {
@@ -1201,7 +1477,7 @@ var app;
                                         break;
                                 }
                             });
-                            _this.workingType = _this.numberToType(_this.wrType, false).toLowerCase();
+                            _this.workingType = _this.numberToType(_this.wrType, false, _this.wrName).toLowerCase();
                             _this.wrIsNew = false;
                         });
                         return _this.CrmService.retrieveUsers(_this.wrCreatedById, _this.wrModifiedById);
@@ -1231,15 +1507,16 @@ var app;
                         _this.notify(err);
                     });
                 };
-                this.numberToType = function (input, short) {
+                this.numberToType = function (input, short, name) {
                     var types = {
                         3: (short) ? "JS" : "JavaScript",
                         1: "HTML",
                         2: "CSS",
-                        4: "XML"
+                        4: "XML",
+                        0: (short) ? "TS" : "TypeScript"
                     };
-                    if (!input)
-                        return "";
+                    if (input === 4 && name.toUpperCase().substr(name.length - 3) === ".TS")
+                        return (short) ? "TS" : "TypeScript";
                     return types[input];
                 };
                 this.typeToNumber = function (input) {
@@ -1248,11 +1525,32 @@ var app;
                         "js": 3,
                         "html": 1,
                         "css": 2,
-                        "xml": 4
+                        "xml": 4,
+                        "ts": 0,
+                        "typescript": 0
                     };
                     if (!input)
                         return "";
                     return types[input];
+                };
+                this.transpile = function () {
+                    var model = _this.editor.getModel();
+                    return new Promise(function (resolve) {
+                        monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+                            target: monaco.languages.typescript.ScriptTarget.ES5,
+                            allowNonTsExtensions: true
+                        });
+                        monaco.languages.typescript.getTypeScriptWorker()
+                            .then(function (worker) {
+                            worker(model.uri)
+                                .then(function (client) {
+                                client.getEmitOutput(model.uri.toString()).then(function (r) {
+                                    resolve(r);
+                                    ;
+                                });
+                            });
+                        });
+                    });
                 };
                 this.gridOptions = {
                     data: this.wrData,
@@ -1276,18 +1574,18 @@ var app;
                         {
                             field: "type",
                             displayName: "Type",
-                            width: 90,
+                            width: 120,
                             filter: {
                                 term: "",
                                 type: this.uiGridConstants.filter.SELECT,
                                 selectOptions: [
                                     { value: "3", label: "JS" }, { value: "1", label: "HTML" }, { value: "2", label: "CSS" },
-                                    { value: "4", label: "XML" }
+                                    { value: "4", label: "XML" }, { value: "0", label: "TypeScript" }
                                 ]
                             },
                             cellClass: "gridLeft",
                             enableHiding: false,
-                            cellTemplate: "<span>{{ grid.appScope.crmCodeEditor.numberToType(COL_FIELD, true) }}</span>"
+                            cellTemplate: "<span>{{ grid.appScope.crmCodeEditor.numberToType(COL_FIELD, true, grid.appScope.crmCodeEditor.wrName) }}</span>"
                         },
                         {
                             field: "ismanaged",
@@ -1339,6 +1637,7 @@ var app;
                 $scope.crmService = CrmService;
                 this.init();
                 this.notify.config({ startTop: 300, maximumOpen: 1 });
+                this.resize();
             }
             return CrmCodeEditor;
         }());
@@ -1376,11 +1675,11 @@ var app;
                     var validMimeTypes = attrs.fileDropzone;
                     var checkExtension = function (name) {
                         var extenion = name.split(".").pop();
-                        var validExtensions = ["js", "html", "css", "xml"];
+                        var validExtensions = ["js", "ts", "html", "css", "xml"];
                         if (validExtensions.indexOf(extenion.toLowerCase()) !== -1)
                             return true;
                         else {
-                            $scope.crmCodeEditor.notify({ message: "Invalid file type. File extension must be one of following types JS, HTML, CSS, or XML", duration: 3000 });
+                            $scope.crmCodeEditor.notify({ message: "Invalid file type. File extension must be one of following types JS, TS, HTML, CSS, or XML", duration: 3000 });
                             return false;
                         }
                     };
@@ -2034,6 +2333,19 @@ var UiSnippets = (function () {
         collection.push(new Snippet("XrmUiGetViewPortHeight", monaco.languages.CompletionItemKind.Function, "5.0+ Method to get the height of the viewport in pixels.", "Xrm.Page.ui.getViewPortHeight()"));
         collection.push(new Snippet("XrmUiRefreshRibbon", monaco.languages.CompletionItemKind.Function, "5.0+ Method to cause the ribbon to re-evaluate data that controls what is displayed in it.", "Xrm.Page.ui.refreshRibbon()"));
         collection.push(new Snippet("XrmUiSetFormNotification", monaco.languages.CompletionItemKind.Function, "6.0+ Use this method to display form level notifications.", "Xrm.Page.ui.setFormNotification(\"message\", \"ERROR|WARNING|INFO\", \"uniqueId\")"));
+        collection.push(new Snippet("XrmUiQuickFormControls", monaco.languages.CompletionItemKind.Function, "8.1+ A collection of all quick view controls on a form.", "Xrm.Page.ui.quickForms"));
+        collection.push(new Snippet("XrmUiQuickFormControlsForEach", monaco.languages.CompletionItemKind.Function, "8.1+ Apply an action in a delegate function to each object in the collection of quick view controls on a form.", "Xrm.Page.ui.quickForms.forEach(function (qvcontrol, index) {\n" +
+            "\n" +
+            "})"));
+        collection.push(new Snippet("XrmUiQuickFormGetControl", monaco.languages.CompletionItemKind.Function, "8.1+ Gets the constituent controls in a quick view control.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").getControl(\"controlname\")"));
+        collection.push(new Snippet("XrmUiQuickFormGetControlType", monaco.languages.CompletionItemKind.Function, "8.1+ Returns a string value that categorizes quick view controls.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").getControlType()"));
+        collection.push(new Snippet("XrmUiQuickFormGetName", monaco.languages.CompletionItemKind.Function, "8.1+ Returns the name assigned to the quick view control.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").getName()"));
+        collection.push(new Snippet("XrmUiQuickFormGetParent", monaco.languages.CompletionItemKind.Function, "8.1+ Returns a reference to the section object that contains the control.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").getParent()"));
+        collection.push(new Snippet("XrmUiQuickFormGetVisible", monaco.languages.CompletionItemKind.Function, "8.1+ Returns a value that indicates whether the quick view control is currently visible.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").getVisible()"));
+        collection.push(new Snippet("XrmUiQuickFormGetLabel", monaco.languages.CompletionItemKind.Function, "8.1+ Returns the label for the quick view control.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").getLabel()"));
+        collection.push(new Snippet("XrmUiQuickFormSetLabel", monaco.languages.CompletionItemKind.Function, "8.1+ Sets the label for the quick view control.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").setLabel(\"value\")"));
+        collection.push(new Snippet("XrmUiQuickFormIsLoaded", monaco.languages.CompletionItemKind.Function, "8.1+ Returns whether the data binding for the constituent controls in a quick view control is complete.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").isLoaded()"));
+        collection.push(new Snippet("XrmUiQuickFormRefresh", monaco.languages.CompletionItemKind.Function, "8.1+ Refreshes the data displayed in a quick view control.", "Xrm.Page.ui.quickForms.get(\"qvcontrolname\").refresh()"));
         return collection;
     };
     return UiSnippets;

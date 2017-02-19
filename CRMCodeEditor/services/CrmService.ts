@@ -203,8 +203,12 @@ module app.services {
             });
         }
 
-        public publishItem = (id: string) => {
+        public publishItem = (id1: string, id2: string) => {
             return new Promise((resolve, reject) => {
+                let publishString = "&lt;webresource&gt;{" + id1 + "}&lt;/webresource&gt;";
+                if (id2 !== null)
+                    publishString += "&lt;webresource&gt;{" + id2 + "}&lt;/webresource&gt;";
+
                 let request = [];
                 request.push("<s:Envelope xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>");
                 request.push("  <s:Body>");
@@ -213,7 +217,7 @@ module app.services {
                 request.push("        <a:Parameters xmlns:c='http://schemas.datacontract.org/2004/07/System.Collections.Generic'>");
                 request.push("          <a:KeyValuePairOfstringanyType>");
                 request.push("            <c:key>ParameterXml</c:key>");
-                request.push("            <c:value i:type='d:string' xmlns:d='http://www.w3.org/2001/XMLSchema'>&lt;importexportxml&gt;&lt;webresources&gt;&lt;webresource&gt;{" + id + "}&lt;/webresource&gt;&lt;/webresources&gt;&lt;/importexportxml&gt;</c:value>");
+                request.push("            <c:value i:type='d:string' xmlns:d='http://www.w3.org/2001/XMLSchema'>&lt;importexportxml&gt;&lt;webresources&gt;" + publishString + "&lt;/webresources&gt;&lt;/importexportxml&gt;</c:value>");
                 request.push("          </a:KeyValuePairOfstringanyType>");
                 request.push("        </a:Parameters>");
                 request.push("        <a:RequestId i:nil='true' />");
@@ -496,6 +500,31 @@ module app.services {
                         if (req.status === 200) {
                             var result = JSON.parse(req.responseText).d;
                             resolve(result.Content);
+                        } else {
+                            let message = this.checkForRestError(req);
+                            reject(message);
+                        }
+                    }
+                };
+                req.send();
+            });
+        }
+
+        public retrieveItemByName = (name: string) => {
+            return new Promise((resolve, reject) => {
+                var req = new XMLHttpRequest();
+                req.open("GET", Xrm.Page.context.getClientUrl() + "/XRMServices/2011/OrganizationData.svc/WebResourceSet?$select=WebResourceId&$filter=Name eq '" + name + "'", true);
+                req.setRequestHeader("Accept", "application/json");
+                req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+                req.onreadystatechange = () => {
+                    if (req.readyState === 4) {
+                        req.onreadystatechange = null;
+                        if (req.status === 200) {
+                            let returned = JSON.parse(req.responseText).d;
+                            let results = returned.results;
+                            if (results.length === 1)
+                                resolve(results[0].WebResourceId);
+                            resolve(null);
                         } else {
                             let message = this.checkForRestError(req);
                             reject(message);

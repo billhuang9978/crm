@@ -21,6 +21,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="content\CrmCodeEditor.css" />
+    <Content Include="content\images\js.png" />
     <Content Include="content\images\logo16.png" />
     <Content Include="content\images\logo32.png" />
     <Content Include="CrmCodeEditor.html" />
@@ -135,6 +136,7 @@
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="directives\fileUpload.ts" />
     <TypeScriptCompile Include="libs\typings\x2js\xml2json.d.ts" />
+    <TypeScriptCompile Include="libs\typings\typescript-services\typescriptServices.d.ts" />
     <TypeScriptCompile Include="services\Base64.ts" />
     <TypeScriptCompile Include="services\CrmService.ts" />
     <TypeScriptCompile Include="snippets\ContextSnippets.ts" />

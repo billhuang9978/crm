@@ -21,8 +21,6 @@
                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTJDBGvsAAACQUlEQVRIS63WT0sVURjH8VvYHykpaae+AXetLKRNUYoiuYsyrL2thJCKNlGbXkBQLYMgJYuiF5AYZOCbEAQhiaD8k5Ta9zfMkXMfnzMOd+YHH+5l5tznMHfOPHMaJdOOUTzDN6ziX07fdUznruI4KqcTT/ADuyVp7GPoty3lJnQ1XvEy9NsxlM4RvIRXrBUv0IbCaNL38ApU8Q6qnUydV2rpyt3onsYDN3AetzGXHyvjM26hH3/yY8ENNEUr0C6kecQZxgwe4Bou5/Rdx3RuCHG+IK6pOZpWux6ZeIDMompUw9bVo5ZFzcF7Tr+iahZg6+qqjyLrSPakfETVfIJXWx0ua3X2hBZWF6qmG5uw9TVn1mftibeoK6pl6+sWuG3xPuqKVryt/x3ZG8aemERdUS1b/y/ciR+hrqiWra853b96GnVFtWx9zekurr1nrWKOwesR2eLyHieZQNXcgVc7e5xSDeQ3+tBqzmENXu2sgWiPFP8dS9jKv6/jLk6gbDowBTWhUDPWdBvDS2IbI1DX0tspDP4FvczvQb3d5iQe4gNSVxnsvSSU+LW4g3GcwUp+LHiNVN4gHutR4ziNpmhjFgb8xCmcxSL0TyzjIlK5jngSz76NQIi2J2HQUx3Icyj/LIo2BfEk1nMko92g7mUY/AoX0INeFO2ViyZWzVI7zfjKYyqeyhV4v9GVHjhpHN0P204HkMog4rFaSMl7elC0ArX8VUTFihbXJYQJ9Zt9q7eV6IFXFytaZIehblWixzca/wHl+IA7gyLVvwAAAABJRU5ErkJggg==" />
         </a>
     </div>
-    <div id="wrGrid" ui-grid="crmCodeEditor.gridOptions" ui-grid-pagination ng-show="crmCodeEditor.gridmode()"></div>
-
     <div id="statusbar" ng-show="crmCodeEditor.editmode()">
         <span class="statusmessage" ng-bind="crmCodeEditor.statusMessage"></span><span ng-bind="crmCodeEditor.wrName"></span>
     </div>
@@ -33,6 +31,7 @@
         <label for="name" class="wrField">Name (Required): </label>
         <span id="prefix" class="wrField" ng-bind="crmCodeEditor.solPrefix" ng-show="crmCodeEditor.showcreate()"></span>
         <input id="name" class="wrField" type="text" maxlength="256" ng-model="crmCodeEditor.wrName" ng-disabled="!crmCodeEditor.wrIsNew" />
+        <span id="tsExt" class="wrField {{crmCodeEditor.wrType == '0' ? '' : 'nodisplay'}}" ng-show="crmCodeEditor.wrIsNew">{{crmCodeEditor.wrType == "0" ? ".ts" : "&nbsp;"}}</span>
         <label for="displayName" class="wrField">Display Name: </label>
         <input id="displayName" class="wrField" type="text" maxlength="200" ng-model="crmCodeEditor.wrDisplayName" />
         <br />
@@ -62,26 +61,37 @@
     </div>
 
     <div id="toolbar" ng-show="crmCodeEditor.editmode()" ng-cloak>
-        <div class="save toolbarButton smallImageButton" title="Save" ng-click="crmCodeEditor.validateSaveItem(false)" ng-show="crmCodeEditor.showsave()"></div>
-        <div class="save toolbarButton smallImageButton" title="Create" ng-click="crmCodeEditor.validateCreateItem()" ng-show="crmCodeEditor.showcreate()"></div>
-        <div class="savepublish toolbarButton smallImageButton" title="Save & Publish" ng-click="crmCodeEditor.validateSaveItem(true)" ng-show="crmCodeEditor.showsave()"></div>
-        <div class="saveas toolbarButton smallImageButton" title="Save As..." ng-click="crmCodeEditor.saveAs()" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="save toolbarButton smallImageButton {{crmCodeEditor.disablebutton()}}" title="Save" ng-click="crmCodeEditor.validateSaveItem(false)" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="save toolbarButton smallImageButton {{crmCodeEditor.disablebutton()}}" title="Create" ng-click="crmCodeEditor.validateCreateItem()" ng-show="crmCodeEditor.showcreate()"></div>
+        <div class="savepublish toolbarButton smallImageButton {{crmCodeEditor.disablebutton()}}" title="Save & Publish" ng-click="crmCodeEditor.validateSaveItem(true)" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="saveas toolbarButton smallImageButton {{crmCodeEditor.disablebutton()}}" title="Save As..." ng-click="crmCodeEditor.saveAs()" ng-show="crmCodeEditor.showsave()"></div>
         <div class="cancel toolbarButton smallImageButton" title="Cancel" ng-click="crmCodeEditor.cancel()"></div>
-        <div class="copycode toolbarButton smallImageButton" title="Copy Code" ng-click="crmCodeEditor.copyCode()"></div>
-        <div class="diff toolbarButton smallImageButton" title="Compare With Published Version" ng-click="crmCodeEditor.showDiff()" ng-show="crmCodeEditor.showsave()"></div>
-        <div class="uploadMessage" ng-show="!crmCodeEditor.wrIsManaged && crmCodeEditor.editorMode == 'edit'">Drag an existing file (JS, HTML, CSS, or XML) into the editor to upload</div>
+        <div class="copycode toolbarButton smallImageButton {{crmCodeEditor.disablebutton()}}" title="Copy Code" ng-click="crmCodeEditor.copyCode()"></div>
+        <div class="diff toolbarButton smallImageButton {{crmCodeEditor.disablediffbutton()}}" title="Compare With Published Version" ng-click="crmCodeEditor.showDiff()" ng-show="crmCodeEditor.showsave()"></div>
+        <div class="jscript toolbarButton smallImageButton {{crmCodeEditor.disablesxsbutton()}}" title="Show JavaScript" ng-click="crmCodeEditor.showJs()" ng-show="crmCodeEditor.wrType == '0'"></div>
+        <div class="uploadMessage" ng-show="!crmCodeEditor.wrIsManaged && crmCodeEditor.editorMode == 'edit'">Drag an existing file (JS, TS, HTML, CSS, or XML) into the editor to upload</div>
     </div>
-
-    <div id="monacoeditor" ng-show="crmCodeEditor.editmode()" ng-cloak file-upload="[text/css, text/plain, text/html, text/xml]"
+    <div id="sxswrapper" style="display: {{crmCodeEditor.showsxs()}};">
+        <div id="tsmonacoeditor"></div>
+        <div id="jsmonacoeditor"></div>
+        <div ng-show="crmCodeEditor.editorMode == 'sxs'" ng-cloak>
+            <div class="diffLeft">TypeScript</div>
+            <div class="diffRight">JavaScript</div>
+        </div>
+    </div>
+    <div id="monacoeditor" ng-cloak file-upload="[text/css, text/plain, text/html, text/xml]" style="display: {{crmCodeEditor.showeditor()}};"
          file-name="uploadFileName" data-max-file-size="100000"></div>
     <div ng-show="crmCodeEditor.editorMode == 'diff'" ng-cloak>
-        <div class="diffLeft">Published Version</div>
-        <div class="diffRight">Working Version</div>
+        <div class="diffLeft">Working Version</div>
+        <div class="diffRight">Published Version</div>
     </div>
+
+    <div id="wrGrid" ui-grid="crmCodeEditor.gridOptions" ui-grid-pagination ng-show="crmCodeEditor.gridmode()"></div>
+
     <script src="monacoeditor/min/vs/loader.js"></script>
     <script>
         require.config({ paths: { 'vs': 'monacoeditor/min/vs' } });
-        require(['vs/editor/editor.main'], function () {
+        require(['vs/editor/editor.main', 'vs/language/typescript/lib/typescriptServices'], function () {
         });
     </script>
 </body>

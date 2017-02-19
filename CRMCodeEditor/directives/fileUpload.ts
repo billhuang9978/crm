@@ -35,11 +35,11 @@ module app.directives {
 
             let checkExtension = (name) => {
                 let extenion = name.split(".").pop();
-                let validExtensions = ["js", "html", "css", "xml"];
+                let validExtensions = ["js", "ts", "html", "css", "xml"];
                 if (validExtensions.indexOf(extenion.toLowerCase()) !== -1)
                     return true;
                 else {
-                    $scope.crmCodeEditor.notify({ message: "Invalid file type. File extension must be one of following types JS, HTML, CSS, or XML", duration: 3000 });
+                    $scope.crmCodeEditor.notify({ message: "Invalid file type. File extension must be one of following types JS, TS, HTML, CSS, or XML", duration: 3000 });
                     return false;
                 }
             }
